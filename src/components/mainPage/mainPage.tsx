@@ -1,9 +1,8 @@
-import { View, Text,Image,TouchableOpacity, Button, TextInput , ScrollView} from 'react-native'
+import { View, Text,Image,TouchableOpacity,  TextInput , ScrollView} from 'react-native'
 import React, { useState } from 'react'
 import styles from './styles'
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialDesignIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 export default function MainPage() {

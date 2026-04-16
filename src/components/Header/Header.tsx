@@ -1,6 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'; // Import the Icon component
-import Entypo from 'react-native-vector-icons/Entypo'; // Import the Icon component
 import React from 'react'
 import styles from './styles'
 import { useNavigation } from '@react-navigation/native';

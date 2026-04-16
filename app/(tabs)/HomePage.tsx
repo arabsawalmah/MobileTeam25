@@ -2,19 +2,17 @@ import React, { useEffect } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Image,
   ActivityIndicator,
 } from "react-native";
-import { Ionicons, MaterialIcons, Feather } from "@expo/vector-icons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {  Ionicons,MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import HomePageStyles from "../../constants/HomePageStyles";
-import BottomNavBar from "../../components/BottomNavBar";
+import BottomNavBar from "@/src/components/Nav/BottomNavBar";
 
 const fetchOrder = async () => {
   const res = await fetch("https://mocki.io/v1/0a7b1d9c-9b0f-4d2b"); // mock API

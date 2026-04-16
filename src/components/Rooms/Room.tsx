@@ -1,9 +1,13 @@
-import { View, Text ,StyleSheet, Touchable, TouchableOpacity } from 'react-native'
+import { View, Text ,StyleSheet,  TouchableOpacity } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useRouter } from 'expo-router';
 
 
 export default function Room() {
+
+    const router=useRouter();
+
   return (
     <View style={styles.container}>
         <View>
@@ -12,7 +16,7 @@ export default function Room() {
         </View>
 
 <View style={styles.griid}>
-        <TouchableOpacity style={styles.feach} onPress={() => console.log(255)}>
+        <TouchableOpacity style={styles.feach} onPress={() =>router.push("./")}>
             <View style={styles.icon}><Icon name="sofa" size={25}/></View>
             <Text style={styles.address}>غرفة معيشة</Text>
             <Text style={styles.description}>كتب , طاولة , تلفاز </Text>

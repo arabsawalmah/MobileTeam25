@@ -1,9 +1,9 @@
 import ApiBase from "@/services/ApiBase";
-import {LOGIN_API} from "@/constants/api";
+// import {LOGIN_API} from "@/constants/api";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import app from "./firebaseConfig";
 import StorageService from "@/services/StorageService";
-import {router} from "expo-router";
+// import {router} from "expo-router";
 
 const auth = getAuth(app);
 
