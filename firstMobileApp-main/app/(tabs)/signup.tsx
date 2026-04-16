@@ -13,23 +13,35 @@ import {Controller, useForm} from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import {Image} from "expo-image";
-import { login } from "@/services/AuthService"
+import { signup } from "@/services/AuthService"
+
 type FormData = {
     email: string;
     password: string;
+    confirmPassword: string;
 };
 
-
-export default function LoginScreen() {
-    const { control, handleSubmit } = useForm<FormData>({ mode: "all" });
+export default function SignupScreen() {
+    const { control, handleSubmit, watch } = useForm<FormData>({ mode: "all" });
     const [errorMessage, setErrorMessage] = React.useState<string>("");
     const [loading, setLoading] = React.useState(false);
+    const password = watch('password');
 
     const onSubmit = async (data: FormData) => {
         try {
             setErrorMessage("");
+            
+            // التحقق من تطابق كلمات المرور
+            if (data.password !== data.confirmPassword) {
+                setErrorMessage("كلمات المرور غير متطابقة");
+                return;
+            }
+
             setLoading(true);
-            const user = await login(data);
+            const user = await signup({
+                email: data.email,
+                password: data.password,
+            });
             console.log(user);
             router.replace('/home');
         } catch (error: any) {
@@ -41,6 +53,9 @@ export default function LoginScreen() {
         }
     };
 
+    const handleBackToLogin = () => {
+        router.back();
+    }
 
     return (
         <KeyboardAvoidingView 
@@ -49,7 +64,7 @@ export default function LoginScreen() {
         >
             <ScrollView contentContainerStyle={styles.scrollContent}>
             <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>صفحة الدخول</Text>
+            <Text style={styles.title}>إنشاء حساب</Text>
             <View style={styles.imageContainer}>
                 <Image source={require('@/assets/images/logo.naqel.png')} style={styles.reactLogo} />
             </View>
@@ -59,6 +74,7 @@ export default function LoginScreen() {
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 </View>
             )}
+
             <Controller
                 control={control}
                 name={"email"}
@@ -80,12 +96,23 @@ export default function LoginScreen() {
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />
+                        {error?.message && (
+                            <Text style={styles.fieldError}>{error.message}</Text>
+                        )}
                     </View>
                 )}
-            ></Controller>
+            />
+
             <Controller
                 control={control}
                 name={"password"}
+                rules={{
+                    required: "كلمة المرور مطلوبة",
+                    minLength: {
+                        value: 6,
+                        message: "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
+                    },
+                }}
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <View>
                         <Text style={styles.label}>كلمة المرور</Text>
@@ -93,17 +120,43 @@ export default function LoginScreen() {
                             style={[styles.input, error && styles.errorInput]}
                             onChangeText={onChange}
                             value={value}
-                            placeholder="أدخل كلمة المرور"
-                            secureTextEntry={true}
+                            placeholder="كلمة المرور"
+                            secureTextEntry
                             autoCapitalize="none"
                         />
-                        {error?.message &&
-                            <Text style={{ color: "red" }}>{error.message}</Text>
-                        }
+                        {error?.message && (
+                            <Text style={styles.fieldError}>{error.message}</Text>
+                        )}
                     </View>
                 )}
-            ></Controller>
-            <Pressable 
+            />
+
+            <Controller
+                control={control}
+                name={"confirmPassword"}
+                rules={{
+                    required: "تأكيد كلمة المرور مطلوب",
+                    validate: (value) => value === password || "كلمات المرور غير متطابقة",
+                }}
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <View>
+                        <Text style={styles.label}>تأكيد كلمة المرور</Text>
+                        <TextInput
+                            style={[styles.input, error && styles.errorInput]}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="تأكيد كلمة المرور"
+                            secureTextEntry
+                            autoCapitalize="none"
+                        />
+                        {error?.message && (
+                            <Text style={styles.fieldError}>{error.message}</Text>
+                        )}
+                    </View>
+                )}
+            />
+
+            <Pressable
                 onPress={handleSubmit(onSubmit)}
                 disabled={loading}
                 style={({ pressed }) => [
@@ -112,25 +165,12 @@ export default function LoginScreen() {
                     pressed && { opacity: 0.7 },
                 ]}
             >
-                <Text style={styles.buttonText}>{loading ? 'جاري الدخول...' : 'تسجيل الدخول'}</Text>
+                <Text style={styles.buttonText}>{loading ? 'جاري التسجيل...' : 'إنشاء حساب'}</Text>
             </Pressable>
 
-            <View style={styles.divider}>
-                <View style={styles.dividerLine} />
-                <Text style={styles.dividerText}>أو</Text>
-                <View style={styles.dividerLine} />
-            </View>
-
-            <Pressable 
-                onPress={() => router.push('/(tabs)/signup')}
-                style={({ pressed }) => [
-                    styles.signupButton,
-                    pressed && { opacity: 0.7 },
-                ]}
-            >
-                <Text style={styles.signupButtonText}>إنشاء حساب جديد</Text>
+            <Pressable onPress={handleBackToLogin} style={styles.loginLink}>
+                <Text style={styles.loginLinkText}>لديك حساب؟ <Text style={styles.loginLinkBold}>دخول</Text></Text>
             </Pressable>
-
         </SafeAreaView>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -161,7 +201,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#2563eb",
         paddingVertical: 14,
         borderRadius: 10,
-        marginTop: 16,
+        marginTop: 24,
     },
     buttonDisabled: {
         backgroundColor: "#cbd5e0",
@@ -198,11 +238,11 @@ const styles = StyleSheet.create({
     errorInput: {
         borderColor: "#ff4d4f",
     },
-    errorText: {
-        color: "#fff",
-        fontSize: 14,
-        fontWeight: "500",
-        textAlign: "center",
+    fieldError: {
+        color: "#ff4d4f",
+        fontSize: 12,
+        marginBottom: 8,
+        marginTop: -8,
     },
     errorContainer: {
         backgroundColor: "#fee",
@@ -212,33 +252,23 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
         borderLeftColor: "#dc2626",
     },
-    divider: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 20,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#ddd',
-    },
-    dividerText: {
-        marginHorizontal: 12,
+    errorText: {
+        color: "#991b1b",
         fontSize: 14,
-        color: '#9ca3af',
+        fontWeight: "500",
+        textAlign: "center",
     },
-    signupButton: {
-        backgroundColor: '#fff',
-        borderWidth: 2,
-        borderColor: '#2563eb',
+    loginLink: {
+        marginTop: 16,
         paddingVertical: 12,
-        borderRadius: 10,
-        alignItems: 'center',
     },
-    signupButtonText: {
-        color: '#2563eb',
-        textAlign: 'center',
-        fontSize: 16,
-        fontWeight: '600',
+    loginLinkText: {
+        textAlign: "center",
+        fontSize: 14,
+        color: "#6b7280",
+    },
+    loginLinkBold: {
+        color: "#2563eb",
+        fontWeight: "600",
     },
 });

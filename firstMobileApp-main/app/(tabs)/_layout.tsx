@@ -13,6 +13,12 @@ export default function TabLayout() {
                 title: 'Login',
             }}
         />
+        <Tabs.Screen
+            name="signup"
+            options={{
+                title: 'Signup',
+            }}
+        />
       </Tabs>
   );
 }
