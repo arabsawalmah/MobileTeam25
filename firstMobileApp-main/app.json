@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "test",
-    "slug": "test",
+    "name": "firstMobileApp2",
+    "slug": "firstMobileApp2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "test",
+    "scheme": "firstmobileapp2",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
